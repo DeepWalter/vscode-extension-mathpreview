@@ -4,10 +4,9 @@ import { SVG } from 'mathjax-full/js/output/svg';
 import { LiteAdaptor } from 'mathjax-full/js/adaptors/liteAdaptor';
 import { RegisterHTMLHandler } from 'mathjax-full/js/handlers/html';
 import type { LiteElement } from 'mathjax-full/js/adaptors/lite/Element';
-// mathjax-full's MathDocument type requires 3 generic params tied to DOM types;
-// using `any` here sidesteps the complexity since we only call .convert() and
-// access results through the liteAdaptor.
-type MathDocument = any;
+// Use ReturnType to derive the MathDocument type without wrestling with
+// mathjax-full's 3 generic params, which are tied to DOM-specific types.
+type MathDocument = ReturnType<typeof mathjax.document>;
 
 /**
  * Renders LaTeX formulas to SVG strings using MathJax v3 with the

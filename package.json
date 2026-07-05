@@ -1,7 +1,7 @@
 {
   "name": "mathpreview",
   "displayName": "Math Preview",
-  "publisher": "mathpreview",
+  "publisher": "deepwalter",
   "description": "Render LaTeX math formulas in hover popups",
   "version": "0.1.0",
   "license": "MIT",

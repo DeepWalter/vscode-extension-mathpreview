@@ -51,9 +51,9 @@ export class MathPreviewHoverProvider implements vscode.HoverProvider {
 		}
 
 		const formula = fm.formula
-			.replace(/\s+/g, ' ')
-			.replace(/\s*([=+\-*/(){}^_,;:|<>.\[\]])\s*/g, '$1')
-			.replace(/\s+(?=\\)/g, '')
+			.replace(/\s+/g, ' ')                                 // collapse runs of whitespace
+			.replace(/\s*([=+\-*/(){}^_,;:|<>.\[\]])\s*/g, '$1')  // strip spaces around operators & brackets
+			.replace(/\s+(?=\\)/g, '')                            // strip spaces before backslash commands
 			.trim();
 
 		const dark = isDarkTheme();
@@ -75,7 +75,13 @@ export class MathPreviewHoverProvider implements vscode.HoverProvider {
 			}
 
 			if (dark) {
-				svg = svg.replace(/style="([^"]*)"/, 'style="$1; color: #e0e0e0;"');
+				// Only the root <svg> element carries a style attribute in MathJax
+				// output; anchor to it explicitly so accidental matches on inner
+				// elements (should they ever appear) are avoided.
+				svg = svg.replace(
+					/(<svg\b[^>]*\bstyle=")([^"]*)(")/,
+					'$1$2; color: #e0e0e0;$3',
+				);
 			}
 
 			let pngBuffer: Buffer;
@@ -96,7 +102,11 @@ export class MathPreviewHoverProvider implements vscode.HoverProvider {
 			this.cache.set(cacheKey, dataUri);
 		}
 
-		const altText = formula.replace(/"/g, '&quot;');
+		const altText = formula
+			.replace(/&/g, '&amp;')
+			.replace(/"/g, '&quot;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;');
 		const imgTag = fm.display
 			? `<p align="center"><img src="${dataUri}" alt="${altText}" style="max-width:100%; height:auto" /></p>`
 			: `<img src="${dataUri}" alt="${altText}" style="height:1.4em; vertical-align:middle" />`;

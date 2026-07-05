@@ -26,6 +26,8 @@ export class RenderCache {
 	}
 
 	set(key: string, dataUri: string): void {
+		// Delete first so updating an existing key promotes it to most-recently-used
+		this.cache.delete(key);
 		if (this.cache.size >= this.maxSize) {
 			const oldestKey = this.cache.keys().next().value;
 			if (oldestKey !== undefined) {

@@ -26,43 +26,52 @@ export class FormulaDetector {
 
 	/**
 	 * Find all math formulas in the given text.
+	 *
+	 * Regexes are processed in priority order: display-latex > inline-latex >
+	 * rst-block > rst-inline. Higher-priority matches always take precedence
+	 * over lower-priority ones when they overlap (regardless of position).
 	 */
 	detect(text: string): FormulaMatch[] {
-		const matches: FormulaMatch[] = [];
 		const consumed: Array<[number, number]> = [];
+		const matches = [
+			...this.collectMatches(text, this.displayLatexRe, 'display-latex', true, consumed),
+			...this.collectMatches(text, this.inlineLatexRe, 'inline-latex', false, consumed),
+			...this.collectMatches(text, this.rstBlockRe, 'rst-block', true, consumed),
+			...this.collectMatches(text, this.rstInlineRe, 'rst-inline', false, consumed),
+		];
+		return matches.sort((a, b) => a.startIndex - b.startIndex);
+	}
 
-		const addMatch = (
-			kind: FormulaMatch['kind'],
-			formula: string,
-			start: number,
-			end: number,
-			raw: string,
-			display: boolean,
-		) => {
+	/**
+	 * Extract matches from `text` using `regex`, skipping any that overlap
+	 * an already-consumed range. Consumed ranges track which spans of text
+	 * are already claimed by higher-priority patterns.
+	 */
+	private collectMatches(
+		text: string,
+		regex: RegExp,
+		kind: FormulaMatch['kind'],
+		display: boolean,
+		consumed: Array<[number, number]>,
+	): FormulaMatch[] {
+		const matches: FormulaMatch[] = [];
+		for (const m of text.matchAll(regex)) {
+			const start = m.index!;
+			const end = start + m[0].length;
 			if (consumed.some(([s, e]) => start < e && end > s)) {
-				return;
+				continue;
 			}
 			consumed.push([start, end]);
-			matches.push({ kind, formula, startIndex: start, endIndex: end, raw, display });
-		};
-
-		for (const m of text.matchAll(this.displayLatexRe)) {
-			addMatch('display-latex', m[1].trim(), m.index!, m.index! + m[0].length, m[0], true);
+			matches.push({
+				kind,
+				formula: m[1].trim(),
+				startIndex: start,
+				endIndex: end,
+				raw: m[0],
+				display,
+			});
 		}
-
-		for (const m of text.matchAll(this.inlineLatexRe)) {
-			addMatch('inline-latex', m[1].trim(), m.index!, m.index! + m[0].length, m[0], false);
-		}
-
-		for (const m of text.matchAll(this.rstBlockRe)) {
-			addMatch('rst-block', m[1].trim(), m.index!, m.index! + m[0].length, m[0], true);
-		}
-
-		for (const m of text.matchAll(this.rstInlineRe)) {
-			addMatch('rst-inline', m[1].trim(), m.index!, m.index! + m[0].length, m[0], false);
-		}
-
-		return matches.sort((a, b) => a.startIndex - b.startIndex);
+		return matches;
 	}
 
 	/**

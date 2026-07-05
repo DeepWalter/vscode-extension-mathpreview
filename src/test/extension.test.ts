@@ -43,8 +43,7 @@ suite('Math Preview Extension Test Suite', () => {
 			assert.ok(mdContent.value.includes('data:image/png;base64,'),
 				'Hover should contain a base64 PNG image');
 		} finally {
-			fs.unlinkSync(tmpFile);
-			fs.rmdirSync(tmpDir);
+			fs.rmSync(tmpDir, { recursive: true, force: true });
 		}
 	});
 
