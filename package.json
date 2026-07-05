@@ -63,7 +63,7 @@
     "test": "vscode-test"
   },
   "dependencies": {
-    "@resvg/resvg-js": "^2.7.0-alpha.2",
+    "@resvg/resvg-wasm": "^2.6.2",
     "mathjax-full": "^3.2.2"
   },
   "devDependencies": {

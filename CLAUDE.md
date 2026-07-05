@@ -54,7 +54,7 @@ Hover over formula → detectAtPosition() → normalize whitespace
 ### Dependencies
 
 - **`mathjax-full`** — LaTeX → SVG rendering in Node.js (liteAdaptor)
-- **`@resvg/resvg-js`** — NAPI-based SVG → PNG conversion (platform-specific native binary, bundle via platform-appropriate CI)
+- **`@resvg/resvg-wasm`** — WASM-based SVG → PNG conversion (pure WebAssembly, no native compilation required)
 
 ### Key design decisions
 
