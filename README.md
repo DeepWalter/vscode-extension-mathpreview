@@ -33,14 +33,45 @@ This extension contributes the following settings:
 
 ### Commands
 
-- **Math Preview: Clear Render Cache** — clears the in-memory PNG cache. Useful if you change themes or want to force re-rendering.
+- **Math Preview: Clear Render Cache** — clears the in-memory PNG cache. Useful to force re-rendering of formulas or free memory.
 
 ## How It Works
 
 ```
-Hover over formula → detect LaTeX at cursor position → normalize whitespace
-→ MathJax (TeX → SVG) → resvg (SVG → PNG)
-→ data:image/png;base64 → <img> in hover popup
+                   ┌─────────────┐
+                   │  Hover over │
+                   │   formula   │
+                   └──────┬──────┘
+                          │
+                 ┌────────▼────────┐
+                 │  Detect LaTeX   │
+                 │ at cursor pos.  │
+                 └────────┬────────┘
+                          │
+                 ┌────────▼────────┐
+                 │   Normalize     │
+                 │   whitespace    │
+                 └────────┬────────┘
+                          │
+                 ┌────────▼────────┐
+                 │    MathJax      │
+                 │  TeX → SVG      │
+                 └────────┬────────┘
+                          │
+                 ┌────────▼────────┐
+                 │     resvg       │
+                 │  SVG → PNG      │
+                 └────────┬────────┘
+                          │
+                 ┌────────▼────────┐
+                 │ data:image/png; │
+                 │    base64       │
+                 └────────┬────────┘
+                          │
+                 ┌────────▼────────┐
+                 │  <img> in hover │
+                 │     popup       │
+                 └─────────────────┘
 ```
 
 The extension reads raw source text at the cursor position — it does not depend on or intercept any language server output. This means it works independently of whatever Python (or other language) extension you use.
@@ -59,4 +90,3 @@ The extension reads raw source text at the cursor position — it does not depen
 - Configurable language list and size scale.
 - Dark/light/high-contrast theme support.
 - LRU render cache with `Clear Render Cache` command.
-- Fixed: sharpened rendered formulas with synchronized MathJax/resvg sizing.
