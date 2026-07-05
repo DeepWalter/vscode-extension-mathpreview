@@ -11,3 +11,17 @@ vsc-extension-quickstart.md
 **/.vscode-test.*
 .claude/**
 CLAUDE.md
+
+# Exclude unused mathjax-full subdirectories (save ~27MB)
+node_modules/mathjax-full/es5/**
+node_modules/mathjax-full/components/**
+node_modules/mathjax-full/ts/**
+
+# Exclude transitive deps unused by liteAdaptor + SVG output pipeline
+node_modules/speech-rule-engine/**
+node_modules/mj-context-menu/**
+node_modules/mhchemparser/**
+node_modules/wicked-good-xpath/**
+node_modules/commander/**
+node_modules/esm/**
+node_modules/@xmldom/xmldom/**
