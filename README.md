@@ -1,71 +1,62 @@
-# mathpreview README
+# Math Preview
 
-This is the README for your extension "mathpreview". After writing up a brief description, we recommend including the following sections.
+Render LaTeX math formulas as crisp images in VS Code hover popups. Works with any language — just hover over a formula and see it rendered instantly.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+- **Hover to preview** — hover over any LaTeX math formula in your source code and see it rendered as a high-resolution image in the hover popup.
+- **Language-agnostic** — works with Python, Markdown, LaTeX, R, or any language you configure. Detects formulas directly from the source text.
+- **Display & inline math** — supports both `$$...$$` (display) and `$...$` (inline) delimiters, plus `\(...\)` and `\[...\]`.
+- **Dark theme aware** — automatically adjusts formula color for dark, light, and high-contrast themes.
+- **Configurable size** — scale rendered formulas from 0.25× to 4× with the `mathpreview.sizeScale` setting. Changes apply instantly, no restart needed.
+- **LRU caching** — caches rendered PNGs in memory for fast follow-up hovers. Configurable cache size.
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+No external dependencies beyond what ships with the extension. The extension bundles:
+
+- [MathJax 3](https://www.mathjax.org/) for LaTeX → SVG rendering
+- [resvg](https://github.com/yisibl/resvg-js) (WASM) for SVG → PNG conversion
+
+Both are pure JavaScript/WASM — no native binaries or system libraries required.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
 This extension contributes the following settings:
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+| Setting | Type | Default | Description |
+| --- | --- | --- | --- |
+| `mathpreview.enabled` | `boolean` | `true` | Enable or disable math rendering in hover popups. |
+| `mathpreview.languages` | `string[]` | `["python"]` | Language IDs for which math rendering is active (e.g. `"python"`, `"markdown"`, `"latex"`, `"r"`). |
+| `mathpreview.sizeScale` | `number` | `1.0` | Scale factor for rendered formula size. Range: 0.25–4.0. Increase for larger popups, decrease for smaller. |
+| `mathpreview.cacheSize` | `number` | `200` | Maximum number of rendered formulas to cache in memory. Requires restart to change. |
+
+### Commands
+
+- **Math Preview: Clear Render Cache** — clears the in-memory PNG cache. Useful if you change themes or want to force re-rendering.
+
+## How It Works
+
+```
+Hover over formula → detect LaTeX at cursor position → normalize whitespace
+→ MathJax (TeX → SVG) → resvg (SVG → PNG)
+→ data:image/png;base64 → <img> in hover popup
+```
+
+The extension reads raw source text at the cursor position — it does not depend on or intercept any language server output. This means it works independently of whatever Python (or other language) extension you use.
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+- Very long formulas may be clipped in the hover popup due to VS Code's hover size limits.
+- `cacheSize` changes require a VS Code restart to take effect (all other settings apply immediately).
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+### 0.1.0
 
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+- Initial release: LaTeX math rendering in hover popups via MathJax + resvg.
+- Support for `$...$`, `$$...$$`, `\(...\)`, and `\[...\]` delimiters.
+- Configurable language list and size scale.
+- Dark/light/high-contrast theme support.
+- LRU render cache with `Clear Render Cache` command.
+- Fixed: sharpened rendered formulas with synchronized MathJax/resvg sizing.

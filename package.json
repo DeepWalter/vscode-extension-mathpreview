@@ -26,8 +26,12 @@
       "properties": {
         "mathpreview.languages": {
           "type": "array",
-          "items": { "type": "string" },
-          "default": ["python"],
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "python"
+          ],
           "description": "Language IDs for which math rendering is enabled (e.g. \"python\", \"markdown\", \"latex\", \"r\")."
         },
         "mathpreview.enabled": {
@@ -42,9 +46,9 @@
         },
         "mathpreview.sizeScale": {
           "type": "number",
-          "default": 1.0,
+          "default": 1,
           "minimum": 0.25,
-          "maximum": 4.0,
+          "maximum": 4,
           "description": "Scale factor for rendered formula size (1.0 = default). Increase for larger popups, decrease for smaller."
         }
       }
@@ -59,7 +63,7 @@
     "test": "vscode-test"
   },
   "dependencies": {
-    "@resvg/resvg-js": "^2.6.2",
+    "@resvg/resvg-js": "^2.7.0-alpha.2",
     "mathjax-full": "^3.2.2"
   },
   "devDependencies": {

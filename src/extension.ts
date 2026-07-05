@@ -21,7 +21,11 @@ export function activate(context: vscode.ExtensionContext): void {
 	// language list internally so config changes apply immediately.
 	context.subscriptions.push(
 		vscode.languages.registerHoverProvider(
-			{ scheme: 'file' },
+			{ scheme: 'file', language: '*' },
+			hoverProvider,
+		),
+		vscode.languages.registerHoverProvider(
+			{ scheme: 'untitled', language: '*' },
 			hoverProvider,
 		),
 	);
