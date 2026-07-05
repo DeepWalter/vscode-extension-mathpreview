@@ -1,23 +1,47 @@
 {
   "name": "mathpreview",
-  "displayName": "mathPreview",
-  "description": "",
-  "version": "0.0.1",
+  "displayName": "Math Preview",
+  "publisher": "mathpreview",
+  "description": "Render LaTeX math formulas in hover popups",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.125.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "mathpreview.helloWorld",
-        "title": "Hello World"
+        "command": "mathpreview.clearCache",
+        "title": "Math Preview: Clear Render Cache"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Math Preview",
+      "properties": {
+        "mathpreview.languages": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["python"],
+          "description": "Language IDs for which math rendering is enabled (e.g. \"python\", \"markdown\", \"latex\", \"r\")."
+        },
+        "mathpreview.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable math rendering in hover popups."
+        },
+        "mathpreview.cacheSize": {
+          "type": "number",
+          "default": 200,
+          "description": "Maximum number of rendered formulas to cache in memory."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -27,15 +51,19 @@
     "lint": "eslint src",
     "test": "vscode-test"
   },
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "mathjax-full": "^3.2.2"
+  },
   "devDependencies": {
-    "@types/vscode": "^1.125.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "24.x",
-    "typescript-eslint": "^8.61.1",
+    "@types/vscode": "^1.125.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.0.0",
     "eslint": "^10.5.0",
     "typescript": "^6.0.3",
-    "@vscode/test-cli": "^0.0.15",
-    "@vscode/test-electron": "^3.0.0"
+    "typescript-eslint": "^8.61.1"
   },
   "overrides": {
     "diff": "^8.0.4",

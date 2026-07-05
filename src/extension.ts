@@ -1,26 +1,43 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { MathPreviewHoverProvider } from './hoverProvider';
+import { MathRenderer } from './mathRenderer';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+let mathRenderer: MathRenderer | undefined;
+let hoverProvider: MathPreviewHoverProvider | undefined;
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "mathpreview" is now active!');
+export function activate(context: vscode.ExtensionContext): void {
+	const config = vscode.workspace.getConfiguration('mathpreview');
+	if (!config.get<boolean>('enabled', true)) {
+		console.log('[mathpreview] Extension is disabled by configuration.');
+		return;
+	}
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('mathpreview.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from mathPreview!');
-	});
+	mathRenderer = new MathRenderer();
 
-	context.subscriptions.push(disposable);
+	const cacheSize = config.get<number>('cacheSize', 200);
+	hoverProvider = new MathPreviewHoverProvider(mathRenderer, cacheSize);
+
+	// Register for all document types — the provider checks the configured
+	// language list internally so config changes apply immediately.
+	context.subscriptions.push(
+		vscode.languages.registerHoverProvider(
+			{ scheme: 'file' },
+			hoverProvider,
+		),
+	);
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand('mathpreview.clearCache', () => {
+			hoverProvider?.clearCache();
+			vscode.window.showInformationMessage('Math Preview: render cache cleared.');
+		}),
+	);
+
+	console.log('[mathpreview] Activated — math hover rendering ready.');
 }
 
-// This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate(): void {
+	mathRenderer?.dispose();
+	mathRenderer = undefined;
+	hoverProvider = undefined;
+}
