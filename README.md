@@ -1,5 +1,7 @@
 # Math Preview
 
+[![Version](https://img.shields.io/github/package-json/v/DeepWalter/vscode-extension-mathpreview?label=version)](https://github.com/DeepWalter/vscode-extension-mathpreview)
+
 Render LaTeX math formulas as crisp images in VS Code hover popups. Works with any language — just hover over a formula and see it rendered instantly.
 
 ## Features
