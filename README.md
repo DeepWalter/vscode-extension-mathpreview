@@ -6,7 +6,7 @@ Render LaTeX math formulas as crisp images in VS Code hover popups. Works with a
 
 - **Hover to preview** — hover over any LaTeX math formula in your source code and see it rendered as a high-resolution image in the hover popup.
 - **Language-agnostic** — works with Python, Markdown, LaTeX, R, or any language you configure. Detects formulas directly from the source text.
-- **Display & inline math** — supports both `$$...$$` (display) and `$...$` (inline) delimiters, plus `\(...\)` and `\[...\]`.
+- **Display & inline math** — supports both `$$...$$` (display) and `$...$` (inline) LaTeX delimiters, plus reStructuredText `.. math::` and ``:math:`...` ``.
 - **Dark theme aware** — automatically adjusts formula color for dark, light, and high-contrast themes.
 - **Configurable size** — scale rendered formulas from 0.25× to 4× with the `mathpreview.sizeScale` setting. Changes apply instantly, no restart needed.
 - **LRU caching** — caches rendered PNGs in memory for fast follow-up hovers. Configurable cache size.
@@ -55,7 +55,7 @@ The extension reads raw source text at the cursor position — it does not depen
 ### 0.1.0
 
 - Initial release: LaTeX math rendering in hover popups via MathJax + resvg.
-- Support for `$...$`, `$$...$$`, `\(...\)`, and `\[...\]` delimiters.
+- Support for `$...$`, `$$...$$`, `.. math::`, and ``:math:`...` `` delimiters.
 - Configurable language list and size scale.
 - Dark/light/high-contrast theme support.
 - LRU render cache with `Clear Render Cache` command.
