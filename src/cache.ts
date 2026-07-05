@@ -10,9 +10,9 @@ export class RenderCache {
 		this.maxSize = maxSize;
 	}
 
-	/** Build a cache key from formula text, display mode, and dark theme flag */
-	makeKey(formula: string, display: boolean, dark: boolean): string {
-		return `${dark ? 'd' : 'l'}|${display ? 'D' : 'i'}|${formula}`;
+	/** Build a cache key from formula text, display mode, dark theme flag, and scale */
+	makeKey(formula: string, display: boolean, dark: boolean, scale: number = 1.0): string {
+		return `${dark ? 'd' : 'l'}|${display ? 'D' : 'i'}|s${scale}|${formula}`;
 	}
 
 	get(key: string): string | undefined {

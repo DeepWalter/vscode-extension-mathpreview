@@ -21,12 +21,13 @@ export class MathPreviewHoverProvider implements vscode.HoverProvider {
 		token: vscode.CancellationToken,
 	): Promise<vscode.Hover | undefined> {
 		// Only process documents whose language ID is in the configured list
-		const languages: string[] = vscode.workspace
-			.getConfiguration('mathpreview')
-			.get('languages', ['python']);
+		const config = vscode.workspace.getConfiguration('mathpreview');
+		const languages: string[] = config.get('languages', ['python']);
 		if (!languages.includes(document.languageId)) {
 			return undefined;
 		}
+
+		const sizeScale = config.get<number>('sizeScale', 1.0);
 
 		const fm = this.detector.detectAtPosition(document, position);
 		if (!fm) {
@@ -44,13 +45,13 @@ export class MathPreviewHoverProvider implements vscode.HoverProvider {
 			.trim();
 
 		const dark = isDarkTheme();
-		const cacheKey = this.cache.makeKey(formula, fm.display, dark);
+		const cacheKey = this.cache.makeKey(formula, fm.display, dark, sizeScale);
 		let dataUri = this.cache.get(cacheKey);
 
 		if (!dataUri) {
 			let svg: string;
 			try {
-				svg = this.renderer.render(formula, fm.display);
+				svg = this.renderer.render(formula, fm.display, sizeScale);
 			} catch (err) {
 				return this.fallbackHover(formula);
 			}
@@ -69,7 +70,9 @@ export class MathPreviewHoverProvider implements vscode.HoverProvider {
 			try {
 				const resvg = new Resvg(svg, {
 					background: 'rgba(255, 255, 255, 0)',
-					dpi: 384,
+					font: {
+						defaultFontSize: Math.round(18 * sizeScale),
+					},
 				});
 				pngBuffer = resvg.render().asPng();
 			} catch (err) {

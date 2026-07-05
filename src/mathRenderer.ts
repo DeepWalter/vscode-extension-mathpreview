@@ -41,15 +41,20 @@ export class MathRenderer {
 		});
 	}
 
+	// Base em size before scale is applied
+	private static readonly BASE_EM = 18;
+
 	/**
 	 * Render a LaTeX formula to a bare SVG string (no <mjx-container> wrapper).
+	 * @param scale Size multiplier (1.0 = default).
 	 */
-	render(formula: string, display: boolean): string {
+	render(formula: string, display: boolean, scale: number = 1.0): string {
+		const em = Math.round(MathRenderer.BASE_EM * scale);
 		const rootNode = this.htmlDocument.convert(formula, {
 			display,
-			em: 24,
-			ex: 12,
-			containerWidth: 800,
+			em,
+			ex: Math.round(em / 2),
+			containerWidth: Math.round(600 * scale),
 		}) as LiteElement;
 
 		// MathJax wraps SVG in <mjx-container> — extract just the <svg> child

@@ -29,9 +29,16 @@ A VS Code extension that renders LaTeX math formulas as images in hover popups. 
 
 ```
 Hover over formula → detectAtPosition() → normalize whitespace
-→ MathJax (TeX→SVG) → resvg (SVG→PNG) → data:image/png;base64
-→ <img> in MarkdownString with supportHtml
+→ MathJax (TeX→SVG, em=18*sizeScale) → resvg (SVG→PNG, defaultFontSize=18*sizeScale)
+→ data:image/png;base64 → <img> in MarkdownString with supportHtml
 ```
+
+### Resolution & sharpness
+
+- MathJax outputs SVG with `width`/`height` in `ex` units and `viewBox` in milli-em.
+- resvg resolves `ex` units from its `defaultFontSize` setting — this MUST match MathJax's `em` value, otherwise `ex` resolves at the wrong pixel density and the image is fuzzy.
+- The `MathRenderer.BASE_EM` constant (18) is multiplied by `sizeScale` to produce both the MathJax `em` and the resvg `defaultFontSize`, keeping them in lockstep.
+- The old `dpi: 384` setting had no effect — resvg's DPI only affects physical SVG units (in, cm, pt), not `ex` or viewBox coordinates.
 
 ### Source files
 
@@ -41,7 +48,7 @@ Hover over formula → detectAtPosition() → normalize whitespace
 | [src/hoverProvider.ts](src/hoverProvider.ts) | `MathPreviewHoverProvider` — core provider: checks language, detects formula at cursor position, normalizes whitespace, renders via MathJax+resvg, caches PNG data URIs. |
 | [src/formulaDetector.ts](src/formulaDetector.ts) | `FormulaDetector` — 4 regex patterns + position-aware `detectAtPosition()` that scans a 5-line window around the cursor. |
 | [src/mathRenderer.ts](src/mathRenderer.ts) | `MathRenderer` — wraps `mathjax-full` with `liteAdaptor`, renders LaTeX to bare `<svg>` strings. |
-| [src/cache.ts](src/cache.ts) | `RenderCache` — LRU cache for final PNG data URIs, keyed by formula + display mode + dark/light theme. |
+| [src/cache.ts](src/cache.ts) | `RenderCache` — LRU cache for final PNG data URIs, keyed by formula + display mode + dark/light theme + size scale. |
 | [src/types.ts](src/types.ts) | `FormulaMatch` interface. |
 
 ### Dependencies
@@ -64,9 +71,14 @@ Hover over formula → detectAtPosition() → normalize whitespace
 {
   "mathpreview.enabled": true,
   "mathpreview.languages": ["python"],
-  "mathpreview.cacheSize": 200
+  "mathpreview.cacheSize": 200,
+  "mathpreview.sizeScale": 1.0
 }
 ```
+
+- `sizeScale` (0.25–4.0, default 1.0) — multiplier for rendered formula size. Read live on every hover (no restart required). Controls both MathJax `em` and resvg `defaultFontSize` in lockstep.
+- `languages` and `sizeScale` are read fresh from config on each hover — changes apply immediately without restarting VS Code.
+- `cacheSize` is read once at activation — requires restart to pick up changes.
 
 ### Testing
 
