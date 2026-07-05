@@ -4,7 +4,16 @@
   "publisher": "mathpreview",
   "description": "Render LaTeX math formulas in hover popups",
   "version": "0.1.0",
+  "license": "MIT",
   "icon": "images/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DeepWalter/vscode-extension-mathpreview"
+  },
+  "bugs": {
+    "url": "https://github.com/DeepWalter/vscode-extension-mathpreview/issues"
+  },
+  "homepage": "https://github.com/DeepWalter/vscode-extension-mathpreview#readme",
   "engines": {
     "vscode": "^1.125.0"
   },
