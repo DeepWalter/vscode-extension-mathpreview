@@ -86,10 +86,11 @@ The extension reads raw source text at the cursor position — it does not depen
 
 ## Release Notes
 
-### 0.1.0
+### 1.0.0
 
-- Initial release: LaTeX math rendering in hover popups via MathJax + resvg.
+- Initial public release: LaTeX math rendering in hover popups via MathJax + resvg.
 - Support for `$...$`, `$$...$$`, `.. math::`, and ``:math:`...` `` delimiters.
 - Configurable language list and size scale.
 - Dark/light/high-contrast theme support.
 - LRU render cache with `Clear Render Cache` command.
+- Whitespace normalization for robust formula detection across coding styles.

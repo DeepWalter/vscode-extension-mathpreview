@@ -3,7 +3,7 @@
   "displayName": "Math Preview",
   "publisher": "deepwalter",
   "description": "Render LaTeX math formulas in hover popups",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "license": "MIT",
   "icon": "images/icon.png",
   "repository": {
