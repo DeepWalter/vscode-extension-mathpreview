@@ -82,4 +82,11 @@ Hover over formula → detectAtPosition() → normalize whitespace
 
 ### Testing
 
-Tests run via `@vscode/test-cli` + `@vscode/test-electron`. The existing test in [src/test/extension.test.ts](src/test/extension.test.ts) is a placeholder. To test manually: press F5 (Run Extension), open a file with LaTeX formulas, and hover over a formula.
+Tests run via `@vscode/test-cli` + `@vscode/test-electron`. The test suite in [src/test/extension.test.ts](src/test/extension.test.ts) covers:
+
+- **Extension activation** — verifies the extension is present and active
+- **Configuration defaults** — checks all 4 settings (`enabled`, `languages`, `sizeScale`, `cacheSize`) match their defaults
+- **Hover provider (file scheme)** — creates a temp `.py` file with a LaTeX formula, executes the hover provider, and asserts a base64 PNG data URI is returned
+- **Hover provider (untitled scheme)** — same check against an unsaved/untitled document
+
+To test manually: press F5 (Run Extension), open a file with LaTeX formulas, and hover over a formula.
