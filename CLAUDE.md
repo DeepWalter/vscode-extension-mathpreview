@@ -46,7 +46,7 @@ Hover over formula → detectAtPosition() → normalize whitespace
 | --- | --- |
 | [src/extension.ts](src/extension.ts) | Entry point. Registers hover provider for all `file`-scheme documents, filters by configured language IDs at runtime. |
 | [src/hoverProvider.ts](src/hoverProvider.ts) | `MathPreviewHoverProvider` — core provider: checks language, detects formula at cursor position, normalizes whitespace, renders via MathJax+resvg, caches PNG data URIs. |
-| [src/formulaDetector.ts](src/formulaDetector.ts) | `FormulaDetector` — 4 regex patterns + position-aware `detectAtPosition()` that scans a 5-line window around the cursor. |
+| [src/formulaDetector.ts](src/formulaDetector.ts) | `FormulaDetector` — 6 regex patterns (`$$`, `\[`, `$`, `\(`, `.. math::`, `:math:`) + position-aware `detectAtPosition()` that scans a 5-line window around the cursor. |
 | [src/mathRenderer.ts](src/mathRenderer.ts) | `MathRenderer` — wraps `mathjax-full` with `liteAdaptor`, renders LaTeX to bare `<svg>` strings. |
 | [src/cache.ts](src/cache.ts) | `RenderCache` — LRU cache for final PNG data URIs, keyed by formula + display mode + dark/light theme + size scale. |
 | [src/types.ts](src/types.ts) | `FormulaMatch` interface. |
@@ -90,3 +90,12 @@ Tests run via `@vscode/test-cli` + `@vscode/test-electron`. The test suite in [s
 - **Hover provider (untitled scheme)** — same check against an unsaved/untitled document
 
 To test manually: press F5 (Run Extension), open a file with LaTeX formulas, and hover over a formula.
+
+### Version bumping
+
+When bumping the version number, always keep these three locations in sync:
+- `package.json` — `"version"` field
+- `package-lock.json` — `"version"` field (two occurrences: top-level and inside `"packages"`)
+- `README.md` — the version badge (hard-coded, e.g. `https://img.shields.io/badge/version-1.1.0-blue`)
+
+The badge is intentionally hard-coded rather than using the GitHub dynamic badge (`package-json/v`) so it reflects the published package version, not whatever is on the default branch.

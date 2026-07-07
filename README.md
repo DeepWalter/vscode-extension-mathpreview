@@ -1,6 +1,6 @@
 # Math Preview
 
-[![Version](https://img.shields.io/github/package-json/v/DeepWalter/vscode-extension-mathpreview?label=version)](https://github.com/DeepWalter/vscode-extension-mathpreview)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue)](https://github.com/DeepWalter/vscode-extension-mathpreview)
 [![License](https://img.shields.io/github/license/DeepWalter/vscode-extension-mathpreview)](https://github.com/DeepWalter/vscode-extension-mathpreview/blob/main/LICENSE)
 
 Render LaTeX math formulas as crisp images in VS Code hover popups. Works with any language — just hover over a formula and see it rendered instantly.
@@ -9,7 +9,7 @@ Render LaTeX math formulas as crisp images in VS Code hover popups. Works with a
 
 - **Hover to preview** — hover over any LaTeX math formula in your source code and see it rendered as a high-resolution image in the hover popup.
 - **Language-agnostic** — works with Python, Markdown, LaTeX, R, or any language you configure. Detects formulas directly from the source text.
-- **Display & inline math** — supports both `$$...$$` (display) and `$...$` (inline) LaTeX delimiters, plus reStructuredText `.. math::` and ``:math:`...` ``.
+- **Display & inline math** — supports `$$...$$` / `\[...\]` (display) and `$...$` / `\(...\)` (inline) math delimiters, plus reStructuredText `.. math::` and ``:math:`...` ``.
 - **Dark theme aware** — automatically adjusts formula color for dark, light, and high-contrast themes.
 - **Configurable size** — scale rendered formulas from 0.25× to 4× with the `mathpreview.sizeScale` setting. Changes apply instantly, no restart needed.
 - **LRU caching** — caches rendered PNGs in memory for fast follow-up hovers. Configurable cache size.
@@ -85,6 +85,10 @@ The extension reads raw source text at the cursor position — it does not depen
 - `cacheSize` changes require a VS Code restart to take effect (all other settings apply immediately).
 
 ## Release Notes
+
+### 1.1.0
+
+- Added support for `\(...\)` (inline) and `\[...\]` (display) LaTeX math delimiters.
 
 ### 1.0.0
 

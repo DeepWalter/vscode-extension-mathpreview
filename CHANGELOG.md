@@ -2,6 +2,10 @@
 
 All notable changes to the "mathpreview" extension will be documented in this file.
 
+## [1.1.0] - 2026-07-07
+
+- Added support for `\(...\)` (inline) and `\[...\]` (display) LaTeX math delimiters
+
 ## [1.0.0] - 2026-07-03
 
 - LaTeX math rendering in hover popups via MathJax + resvg
