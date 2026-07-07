@@ -2,21 +2,29 @@ import * as vscode from 'vscode';
 import type { FormulaMatch } from './types';
 
 /**
- * Detects LaTeX and reStructuredText math formulas in text.
+ * Detects LaTeX, TeX, and reStructuredText math formulas in text.
  *
- * Four patterns, applied in priority order with overlap protection:
- * 1. $$...$$  — display LaTeX
- * 2. $...$    — inline LaTeX
- * 3. .. math:: block — reStructuredText display
- * 4. :math:`...`     — reStructuredText inline
+ * Six patterns, applied in priority order with overlap protection:
+ * 1. $$...$$  — display TeX
+ * 2. \[...\]  — display LaTeX
+ * 3. $...$    — inline TeX
+ * 4. \(...\)  — inline LaTeX
+ * 5. .. math:: block — reStructuredText display
+ * 6. :math:`...`     — reStructuredText inline
  */
 export class FormulaDetector {
 
 	/** Matches $$...$$ display math (multiline, non-greedy) */
-	private readonly displayLatexRe = /\$\$([\s\S]*?)\$\$/g;
+	private readonly displayTexRe = /\$\$([\s\S]*?)\$\$/g;
 
 	/** Matches $...$ inline math (not $$) */
-	private readonly inlineLatexRe = /(?<!\$)\$(?!\$)([^$\n]+?)\$(?!\$)/g;
+	private readonly inlineTexRe = /(?<!\$)\$(?!\$)([^$\n]+?)\$(?!\$)/g;
+
+	/** Matches \[...\] display math (multiline, non-greedy) */
+	private readonly displayLatexRe = /(?<!\\)\\\[([\s\S]*?)\\\]/g;
+
+	/** Matches \(...\) inline math */
+	private readonly inlineLatexRe = /(?<!\\)\\\((.+?)\\\)/g;
 
 	/** Matches reStructuredText .. math:: block directive */
 	private readonly rstBlockRe = /\.\.\s+math::\s*(\S[\s\S]*?)(?=\n\n|\n\.\.|$)/g;
@@ -27,14 +35,17 @@ export class FormulaDetector {
 	/**
 	 * Find all math formulas in the given text.
 	 *
-	 * Regexes are processed in priority order: display-latex > inline-latex >
-	 * rst-block > rst-inline. Higher-priority matches always take precedence
-	 * over lower-priority ones when they overlap (regardless of position).
+	 * Regexes are processed in priority order: display-tex > display-latex >
+	 * inline-tex > inline-latex > rst-block > rst-inline. Higher-priority
+	 * matches always take precedence over lower-priority ones when they
+	 * overlap (regardless of position).
 	 */
 	detect(text: string): FormulaMatch[] {
 		const consumed: Array<[number, number]> = [];
 		const matches = [
+			...this.collectMatches(text, this.displayTexRe, 'display-tex', true, consumed),
 			...this.collectMatches(text, this.displayLatexRe, 'display-latex', true, consumed),
+			...this.collectMatches(text, this.inlineTexRe, 'inline-tex', false, consumed),
 			...this.collectMatches(text, this.inlineLatexRe, 'inline-latex', false, consumed),
 			...this.collectMatches(text, this.rstBlockRe, 'rst-block', true, consumed),
 			...this.collectMatches(text, this.rstInlineRe, 'rst-inline', false, consumed),

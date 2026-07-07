@@ -70,4 +70,58 @@ suite('Math Preview Extension Test Suite', () => {
 		assert.ok(mdContent.value.includes('data:image/png;base64,'),
 			'Hover should contain a base64 PNG image');
 	});
+
+	test('Hover provider renders inline LaTeX delimiter \\(...\\)', async function () {
+		this.timeout(10000);
+		const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'mp-test-'));
+		const tmpFile = path.join(tmpDir, 'test.py');
+		fs.writeFileSync(tmpFile, 'x = 5\ny = "\\(x^2 + y^2\\)"\nz = 10\n');
+
+		try {
+			const uri = vscode.Uri.file(tmpFile);
+			const doc = await vscode.workspace.openTextDocument(uri);
+			await vscode.window.showTextDocument(doc);
+
+			const position = new vscode.Position(1, 8);
+			const hovers = await vscode.commands.executeCommand<vscode.Hover[]>(
+				'vscode.executeHoverProvider',
+				doc.uri,
+				position,
+			);
+
+			assert.ok(hovers && hovers.length > 0, 'Should get hover results for \\(...\\) formula');
+			const mdContent = hovers[0].contents[0] as vscode.MarkdownString;
+			assert.ok(mdContent.value.includes('data:image/png;base64,'),
+				'Hover should contain a base64 PNG image');
+		} finally {
+			fs.rmSync(tmpDir, { recursive: true, force: true });
+		}
+	});
+
+	test('Hover provider renders display LaTeX delimiter \\[...\\]', async function () {
+		this.timeout(10000);
+		const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'mp-test-'));
+		const tmpFile = path.join(tmpDir, 'test.py');
+		fs.writeFileSync(tmpFile, 'x = 5\ny = "\\[x^2 + y^2\\]"\nz = 10\n');
+
+		try {
+			const uri = vscode.Uri.file(tmpFile);
+			const doc = await vscode.workspace.openTextDocument(uri);
+			await vscode.window.showTextDocument(doc);
+
+			const position = new vscode.Position(1, 8);
+			const hovers = await vscode.commands.executeCommand<vscode.Hover[]>(
+				'vscode.executeHoverProvider',
+				doc.uri,
+				position,
+			);
+
+			assert.ok(hovers && hovers.length > 0, 'Should get hover results for \\[...\\] formula');
+			const mdContent = hovers[0].contents[0] as vscode.MarkdownString;
+			assert.ok(mdContent.value.includes('data:image/png;base64,'),
+				'Hover should contain a base64 PNG image');
+		} finally {
+			fs.rmSync(tmpDir, { recursive: true, force: true });
+		}
+	});
 });

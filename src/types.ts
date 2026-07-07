@@ -1,5 +1,11 @@
 /** The kind of formula delimiter that was matched */
-export type FormulaKind = 'inline-latex' | 'display-latex' | 'rst-block' | 'rst-inline';
+export type FormulaKind =
+	| 'inline-tex'            // $...$
+	| 'display-tex'           // $$...$$
+	| 'inline-latex'          // \(...\)
+	| 'display-latex'         // \[...\]
+	| 'rst-block'
+	| 'rst-inline';
 
 /** A matched formula within text */
 export interface FormulaMatch {
